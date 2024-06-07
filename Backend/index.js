@@ -5,9 +5,18 @@ const app = express();
 const authRoutes = require('./routes/auth');
 const mediaRoutes = require('./routes/media');
 const port = process.env.PORT || 3000;
+const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
 
-app.use(express.json());
+// app.use(express.json());
+
+// Middleware to parse JSON in the request body
+https: app.use(express.json());
+
+// Middleware to parse JSON in the response body
+app.use(bodyParser.json());
+
+
 
 const imageStorage = multer.diskStorage({
     // Destination to store image     
