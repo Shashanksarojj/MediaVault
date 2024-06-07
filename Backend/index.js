@@ -11,6 +11,7 @@ const mongoose = require("mongoose")
 
 // app.use(express.json());
 
+
 app.options("", cors({
     origin: ["*"],
     methods: ["GET", "POST", "PATCH", "DELETE", "PUT"],
