@@ -55,8 +55,8 @@ app.get("/", (req, res) => {
 });
 
 
-app.use('/auth', authRoutes);
-app.use('/media', mediaRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/media', mediaRoutes);
 
 app.listen(port, () => {
     console.log('Server is up on port ' + port);
