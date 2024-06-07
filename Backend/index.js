@@ -1,6 +1,9 @@
 const express = require('express');
-// const multer = require("multer");
-// const path = require('path');
+const multer = require("multer");
+const path = require('path');
+const multerS3 = require("multer-s3");
+require('dotenv').config();
+const aws = require('aws-sdk');
 const app = express(),
     cors = require("cors");
 const authRoutes = require('./routes/auth');
@@ -8,6 +11,7 @@ const mediaRoutes = require('./routes/media');
 const port = process.env.PORT || 3000;
 const bodyParser = require("body-parser")
 const mongoose = require("mongoose")
+c
 
 // app.use(express.json());
 
