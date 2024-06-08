@@ -123,62 +123,64 @@ router.post('/uploadVideo', verifyToken, upload.single('video'), async (req, res
     }
 });
 
-// // Get media files for logged-in user
-// router.get('/get-media', verifyToken, async (req, res) => {
-//     try {
-//         const mediaFiles = await Media.find({ userId: req.user.user_id });
-//         // Generate signed URLs for each media file
-//         const signedMediaFiles = await Promise.all(mediaFiles.map(async (media) => {
-//             const params = {
-//                 Bucket: myBucket,
-//                 Key: media.fileName,
-//                 Expires: 60 * 15, // 24 hours in seconds (adjust as needed)
-//             };
-//             const url = await getSignedUrl(s3Client, new GetObjectCommand(params));
-//             return { ...media.toObject(), ImageUrl: url };
-//         }));
-
-
-//         res.status(200).json(signedMediaFiles);
-//     } catch (error) {
-//         res.status(500).json({ message: "Error retrieving media files.", error });
-//     }
-// });
-
-// // Get media files for logged-in user with Pagination
+// Get media files for logged-in user
 router.get('/get-media', verifyToken, async (req, res) => {
     try {
         const mediaFiles = await Media.find({ userId: req.user.user_id });
-
-        if (!mediaFiles || mediaFiles.length === 0) {
-            return res.status(404).json({ message: "No media files found for the user." });
-        }
-
         // Generate signed URLs for each media file
         const signedMediaFiles = await Promise.all(mediaFiles.map(async (media) => {
             const params = {
                 Bucket: myBucket,
                 Key: media.fileName,
-                Expires: 60 * 15, // 15 minutes in seconds (adjust as needed)
+                Expires: 60 * 15, // 24 hours in seconds (adjust as needed)
             };
             const url = await getSignedUrl(s3Client, new GetObjectCommand(params));
-            return { ...media.toObject(), imageUrl: url };
+            return { ...media.toObject(), ImageUrl: url };
         }));
 
-        const totalMediaFiles = signedMediaFiles.length;
-        const totalPages = 1; // Since there's no pagination yet, assume only one page
-        const currentPage = 1; // Assume current page is 1
 
-        res.status(200).json({
-            totalMediaFiles: totalMediaFiles,
-            totalPages: totalPages,
-            currentPage: currentPage,
-            mediaFiles: signedMediaFiles
-        });
+        res.status(200).json(signedMediaFiles);
     } catch (error) {
         res.status(500).json({ message: "Error retrieving media files.", error });
     }
 });
+
+
+
+// // Get media files for logged-in user with Pagination
+// router.get('/get-media', verifyToken, async (req, res) => {
+//     try {
+//         const mediaFiles = await Media.find({ userId: req.user.user_id });
+
+//         if (!mediaFiles || mediaFiles.length === 0) {
+//             return res.status(404).json({ message: "No media files found for the user." });
+//         }
+
+//         // Generate signed URLs for each media file
+//         const signedMediaFiles = await Promise.all(mediaFiles.map(async (media) => {
+//             const params = {
+//                 Bucket: myBucket,
+//                 Key: media.fileName,
+//                 Expires: 60 * 15, // 15 minutes in seconds (adjust as needed)
+//             };
+//             const url = await getSignedUrl(s3Client, new GetObjectCommand(params));
+//             return { ...media.toObject(), imageUrl: url };
+//         }));
+
+//         const totalMediaFiles = signedMediaFiles.length;
+//         const totalPages = 1; // Since there's no pagination yet, assume only one page
+//         const currentPage = 1; // Assume current page is 1
+
+//         res.status(200).json({
+//             totalMediaFiles: totalMediaFiles,
+//             totalPages: totalPages,
+//             currentPage: currentPage,
+//             mediaFiles: signedMediaFiles
+//         });
+//     } catch (error) {
+//         res.status(500).json({ message: "Error retrieving media files.", error });
+//     }
+// });
 
 // Serve media file by ID
 router.get('/media/:id', verifyToken, async (req, res) => {
