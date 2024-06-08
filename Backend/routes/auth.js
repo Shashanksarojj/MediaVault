@@ -3,12 +3,14 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const router = express.Router();
+const { verifyToken } = require('../middleware/authMiddleware');
 
 const JWT_SECRET = 'TygjhshdtQik898948433njsh';
 
-router.get('/test', (req, res) => {
-    res.send("API is working");
-});
+// test-route
+// router.get('/test', (req, res) => {
+//     res.send("API is working");
+// });
 
 router.post('/register', async (req, res) => {
     try {
@@ -40,6 +42,11 @@ router.post('/login', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: "Error logging in.", error });
     }
+});
+
+// Route to verify JWT token
+router.get('/verify-token', verifyToken, (req, res) => {
+    res.json({ status: "success", message: "Token is valid.", userId: req.userId });
 });
 
 module.exports = router;
