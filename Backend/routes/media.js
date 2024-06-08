@@ -66,7 +66,7 @@ router.post('/uploadImage', verifyToken, upload.single('image'), async (req, res
             mimeType: req.file.mimetype,
         });
         await newMedia.save();
-        res.status(201).json({ "Imageurl15min": url });
+        res.status(201).json({ "status": 'success', "Imageurl15min": url });
     } catch (error) {
         res.status(500).json({ message: "Error uploading media.", error });
     }

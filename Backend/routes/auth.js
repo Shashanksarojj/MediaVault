@@ -26,7 +26,7 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     try {
-        console.log("Login Called!")
+        // console.log("Login Called!")
         const { username, password } = req.body;
         const user = await User.findOne({ username });
         if (!user) return res.status(400).json({ message: "Invalid username or password." });
@@ -46,6 +46,7 @@ router.post('/login', async (req, res) => {
 
 // Route to verify JWT token
 router.get('/verify-token', verifyToken, (req, res) => {
+    console.log("token")
     res.json({ status: "success", message: "Token is valid.", userId: req.userId });
 });
 
