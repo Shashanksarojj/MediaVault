@@ -16,7 +16,7 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({ username, password: hashedPassword, name });
         await newUser.save();
-        res.status(201).json({ message: "User registered successfully." });
+        res.status(201).json({ status: "success", message: "User registered successfully." });
     } catch (error) {
         res.status(500).json({ message: "Error registering user.", error });
     }
@@ -36,7 +36,7 @@ router.post('/login', async (req, res) => {
         user.token = token;
         await user.save();
 
-        res.json({ username, token });
+        res.json({ status: "success", username, token });
     } catch (error) {
         res.status(500).json({ message: "Error logging in.", error });
     }
