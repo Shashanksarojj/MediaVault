@@ -1,0 +1,59 @@
+import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
+
+const Header = ({ onLogout }) => {
+    const handleLogoutPress = () => {
+        console.log('logout');
+        Alert.alert(
+            'Logout',
+            'Are you sure you want to log out?',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'OK', onPress: onLogout },
+            ],
+            { cancelable: false }
+        );
+    };
+
+    return (
+        <View style={styles.header}>
+            <Text style={styles.headerText}>Media Vault</Text>
+            <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutPress}>
+                <Text style={styles.logoutButtonText}>Logout</Text>
+            </TouchableOpacity>
+        </View>
+    );
+};
+
+export default Header;
+
+const styles = StyleSheet.create({
+    header: {
+        // backgroundColor: '#1f242d',
+        backgroundColor: '#1d6e67',
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
+    },
+    headerText: {
+        color: '#dbfcff',
+        fontSize: 20,
+        fontWeight: 'bold',
+        // flex: 1,
+        textAlign: 'center',
+    },
+    logoutButton: {
+        // borderWidth: 2,
+        borderColor: 'red',
+        position: 'absolute',
+        right: 20,
+    },
+    logoutButtonText: {
+        color: '#dbfcff',
+        fontSize: 16,
+    },
+});
