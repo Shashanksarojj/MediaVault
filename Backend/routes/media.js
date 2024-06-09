@@ -221,7 +221,7 @@ router.delete('/del-media/:id', verifyToken, async (req, res) => {
         await s3Client.send(command);
         // console.log("Command Send!")
         await Media.deleteOne({ _id: req.params.id });
-        res.status(200).json({ message: "Media deleted successfully." });
+        res.status(200).json({ "status": "success", message: "Media deleted successfully." });
     } catch (error) {
         console.log("Error deleting!")
         res.status(500).json({ message: "Error deleting media.", error });
