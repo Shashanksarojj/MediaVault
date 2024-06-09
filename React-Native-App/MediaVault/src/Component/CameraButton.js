@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, Alert, PermissionsAndroid } from 'r
 import { launchCamera } from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const CameraButton = () => {
+const CameraButton = ({ refreshMediaGallery }) => {
 
     const requestCameraPermission = async () => {
         try {
@@ -86,6 +86,7 @@ const CameraButton = () => {
                 const data = await response.json();
                 // Handle successful parsing
                 if (data && data?.status === 'success') {
+                    refreshMediaGallery();
                     Alert.alert('Success', `${mediaType === 'image' ? 'Image' : 'Video'} uploaded successfully.`);
                 } else {
                     Alert.alert('Upload Failed', `There was an error uploading the ${mediaType}.`);
