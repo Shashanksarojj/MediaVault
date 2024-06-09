@@ -1,12 +1,3 @@
-// Configure Multer storage for server storage
-// const storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, 'uploads/');
-//     },
-//     filename: function (req, file, cb) {
-//         cb(null, Date.now() + '-' + file.originalname);
-//     },
-// });
 
 const express = require('express');
 const multer = require('multer');
@@ -68,7 +59,7 @@ router.post('/uploadImage', verifyToken, upload.single('image'), async (req, res
         await newMedia.save();
         res.status(201).json({ "status": 'success', "Imageurl15min": url });
     } catch (error) {
-        res.status(500).json({ message: "Error uploading media.", error });
+        res.status(500).json({ "status": 'failed', message: "Error uploading media.", error });
     }
 });
 

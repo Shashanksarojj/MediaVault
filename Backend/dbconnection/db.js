@@ -1,6 +1,7 @@
+require('dotenv').config();
 const mongoose = require("mongoose"),
   url =
-    "mongodb+srv://mediaVault:tqGBgP9GCvPka9xy@cluster0.aginiik.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+    process.env.MONGO_CREDENTIALS;
 
 mongoose
   .connect(url)
