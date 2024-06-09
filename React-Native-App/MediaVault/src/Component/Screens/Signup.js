@@ -1,7 +1,26 @@
-import React from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ImageBackground, Alert } from 'react-native';
+import { signup } from '../api';
 
 const Signup = ({ navigation }) => {
+    const [name, setName] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
+    const handleSignup = async () => {
+        try {
+            const response = await signup(name, username, password);
+            // If signup is successful, navigate to the login page
+            if (response && response.status == "success") {
+                navigation.navigate('Login');
+            } else {
+                Alert.alert('Signup Failed', response.message || 'Signup failed. Please try again.');
+            }
+        } catch (error) {
+            Alert.alert('Signup Error', error.message || 'An error occurred during signup. Please try again.');
+        }
+    };
+
     return (
         <ImageBackground
             source={require("../background/a.jpeg")} // Replace with your image URL
@@ -10,25 +29,26 @@ const Signup = ({ navigation }) => {
             <View style={styles.container}>
                 <Text style={styles.title}>Signup</Text>
                 <View style={styles.formContainer}>
-
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Name</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Enter your name"
                             placeholderTextColor="#A9A9A9" // Placeholder text color
+                            value={name}
+                            onChangeText={setName}
                         />
                     </View>
-
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Username</Text>
                         <TextInput
                             style={styles.input}
                             placeholder="Enter your username"
                             placeholderTextColor="#A9A9A9" // Placeholder text color
+                            value={username}
+                            onChangeText={setUsername}
                         />
                     </View>
-
                     <View style={styles.inputContainer}>
                         <Text style={styles.label}>Password</Text>
                         <TextInput
@@ -36,9 +56,11 @@ const Signup = ({ navigation }) => {
                             placeholder="Enter your password"
                             placeholderTextColor="#A9A9A9" // Placeholder text color
                             secureTextEntry={true}
+                            value={password}
+                            onChangeText={setPassword}
                         />
                     </View>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.button} onPress={handleSignup}>
                         <Text style={styles.buttonText}>Signup</Text>
                     </TouchableOpacity>
                 </View>
@@ -51,6 +73,7 @@ const Signup = ({ navigation }) => {
 };
 
 export default Signup;
+
 
 const styles = StyleSheet.create({
     backgroundImage: {

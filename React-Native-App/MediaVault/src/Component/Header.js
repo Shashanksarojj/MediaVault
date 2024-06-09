@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Alert, Image, Text } from 'react-native';
 
 const Header = ({ onLogout }) => {
     const handleLogoutPress = () => {
@@ -17,6 +17,9 @@ const Header = ({ onLogout }) => {
 
     return (
         <View style={styles.header}>
+            <TouchableOpacity style={styles.logo}>
+                <Image source={require('../../assets/logo.png')} style={styles.logoImage} />
+            </TouchableOpacity>
             <Text style={styles.headerText}>Media Vault</Text>
             <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutPress}>
                 <Text style={styles.logoutButtonText}>Logout</Text>
@@ -29,7 +32,6 @@ export default Header;
 
 const styles = StyleSheet.create({
     header: {
-        // backgroundColor: '#1f242d',
         backgroundColor: '#1d6e67',
         paddingVertical: 15,
         paddingHorizontal: 20,
@@ -43,12 +45,18 @@ const styles = StyleSheet.create({
         color: '#dbfcff',
         fontSize: 20,
         fontWeight: 'bold',
-        // flex: 1,
         textAlign: 'center',
     },
+    logo: {
+        position: 'absolute',
+        left: 20,
+    },
+    logoImage: {
+        width: 50, // Adjust the width and height as needed
+        height: 50,
+        borderRadius: 20
+    },
     logoutButton: {
-        // borderWidth: 2,
-        borderColor: 'red',
         position: 'absolute',
         right: 20,
     },
