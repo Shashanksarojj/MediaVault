@@ -94,7 +94,8 @@ const MediaGallery = forwardRef(({ navigation }, ref) => {
                 <Video source={{ uri: item.ImageUrl }} style={styles.thumbnail} paused={true} />
             )}
             {/* <Text numberOfLines={1} style={styles.mediaText}>{item.fileName}</Text> */}
-            <Text style={styles.mediaText}>{item.size ? `${(item.size / 1024).toFixed(2)} KB` : ''}</Text>
+            <Text style={styles.mediaText}>{item.mimeType.startsWith('image/') ? "Image" : 'Video'}</Text>
+            {/* <Text style={styles.mediaText}>{item.size ? `${(item.size / 1024).toFixed(2)} KB` : ''}</Text> */}
         </TouchableOpacity>
     );
 
