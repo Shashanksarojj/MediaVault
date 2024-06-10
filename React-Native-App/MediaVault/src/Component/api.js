@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BASE_URL = "https://media-vault-app.vercel.app/api";
 
@@ -108,6 +109,37 @@ const deleteMedia = async (auth, mediaId) => {
     }
 };
 
+const uploadMedia = async (base64Media, mediaType) => {
+    const token = await AsyncStorage.getItem('token');
+    const formData = new FormData();
+    formData.append(mediaType, {
+        uri: `data:${mediaType}/jpeg;base64,${base64Media}`,
+        type: `${mediaType}/jpeg`,
+        name: `media.jpg`,
+    });
+
+    try {
+        const response = await fetch(`${BASE_URL}/media/uploadImage`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
+            },
+            body: formData,
+        });
+
+        const data = await response.json();
+        if (data && data.status === 'success') {
+            return { success: true, message: 'Image uploaded successfully.' };
+        } else {
+            return { success: false, message: 'There was an error uploading the image.' };
+        }
+    } catch (error) {
+        console.error(`Error uploading image:`, error);
+        return { success: false, message: 'An error occurred while uploading the image.' };
+    }
+};
+
 
 
 export {
@@ -115,5 +147,6 @@ export {
     signup,
     fetchMedia,
     verifyToken,
-    deleteMedia
+    deleteMedia,
+    uploadMedia
 };

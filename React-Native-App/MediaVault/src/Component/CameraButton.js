@@ -1,105 +1,76 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, Alert, PermissionsAndroid } from 'react-native';
-import { launchCamera } from 'react-native-image-picker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { uploadMedia } from './api';
 
 const CameraButton = ({ refreshMediaGallery }) => {
+    const [hasPermission, setHasPermission] = useState(null);
 
-    const requestCameraPermission = async () => {
-        try {
-            const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.CAMERA,
-                {
-                    title: "Camera Permission",
-                    message: "App needs camera permission",
-                    buttonNeutral: "Ask Me Later",
-                    buttonNegative: "Cancel",
-                    buttonPositive: "OK"
-                }
-            );
-            return granted === PermissionsAndroid.RESULTS.GRANTED;
-        } catch (err) {
-            console.warn(err);
-            return false;
-        }
-    };
+    useEffect(() => {
+        (async () => {
+            const { status } = await ImagePicker.requestCameraPermissionsAsync();
+            setHasPermission(status === 'granted');
+        })();
+    }, []);
 
     const handleCameraPress = async () => {
-        const hasPermission = await requestCameraPermission();
         if (!hasPermission) {
             Alert.alert('Permission Denied', 'Camera permission is required to capture images and videos.');
             return;
         }
 
         const options = {
-            mediaType: 'mixed', // Allow both photos and videos
-            includeBase64: true,
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            quality: 0.5,
+            base64: true,
         };
 
-        launchCamera(options, async (response) => {
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.errorCode) {
-                console.error('ImagePicker Error: ', response.errorMessage);
-            } else {
-                const asset = response.assets[0];
-                const base64Media = asset.base64;
-                const mediaType = asset.type.startsWith('image/') ? 'image' : 'video';
+        try {
+            const result = await ImagePicker.launchCameraAsync(options);
 
-                if (base64Media) {
+            if (!result.canceled) {
+                const asset = result.assets[0];
+                console.log("result.assets[0].uri : ", asset.uri);
+                const { base64, duration, exif, fileName, fileSize, height, type, uri, width } = asset;
+                console.log({
+                    duration,
+                    exif,
+                    fileName,
+                    fileSize,
+                    height,
+                    type,
+                    uri,
+                    width
+                });
+                const mediaType = 'image';
+
+                if (base64) {
                     Alert.alert(
                         'Confirm',
                         `Do you want to save this ${mediaType}?`,
                         [
                             { text: 'Cancel', style: 'cancel' },
-                            { text: 'OK', onPress: () => uploadMedia(base64Media, mediaType) },
+                            {
+                                text: 'OK', onPress: async () => {
+                                    const response = await uploadMedia(base64, mediaType);
+                                    if (response.success) {
+                                        Alert.alert('Success', response.message);
+                                        refreshMediaGallery();
+                                    } else {
+                                        Alert.alert('Upload Failed', response.message);
+                                    }
+                                }
+                            },
                         ],
                         { cancelable: false }
                     );
                 } else {
-                    console.error('Invalid media response:', response);
+                    console.log("Base64 Media : ", base64);
+                    console.error('Invalid media response response from here:', asset.mimeType);
                 }
             }
-        });
-    };
-
-    const uploadMedia = async (base64Media, mediaType) => {
-        const token = await AsyncStorage.getItem('token');
-        const formData = new FormData();
-        formData.append(mediaType, {
-            uri: `data:${mediaType}/${mediaType === 'image' ? 'jpeg' : 'mp4'};base64,${base64Media}`,
-            type: `${mediaType}/${mediaType === 'image' ? 'jpeg' : 'mp4'}`,
-            name: `media.${mediaType === 'image' ? 'jpg' : 'mp4'}`,
-        });
-
-        try {
-            const response = await fetch('https://media-vault-app.vercel.app/api/media/uploadImage', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'multipart/form-data',
-                },
-                body: formData,
-            });
-
-            try {
-                const data = await response.json();
-                // Handle successful parsing
-                if (data && data?.status === 'success') {
-                    refreshMediaGallery();
-                    Alert.alert('Success', `${mediaType === 'image' ? 'Image' : 'Video'} uploaded successfully.`);
-                } else {
-                    Alert.alert('Upload Failed', `There was an error uploading the ${mediaType}.`);
-                }
-            } catch (error) {
-                // Handle parsing error
-                console.error(`Error parsing JSON:`, error);
-                Alert.alert('JSON Parse Error', `An error occurred while parsing the server response.`);
-            }
-
         } catch (error) {
-            console.error(`Error uploading ${mediaType}:`, error);
-            Alert.alert('Upload Error', `An error occurred while uploading the ${mediaType}.`);
+            console.error('Error taking picture:', error);
         }
     };
 
@@ -122,10 +93,10 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     cameraButtonText: {
         fontSize: 30,
-        color: 'white'
-    }
+        color: 'white',
+    },
 });

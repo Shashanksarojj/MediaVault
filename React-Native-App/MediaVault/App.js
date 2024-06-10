@@ -1,34 +1,39 @@
-import 'react-native-gesture-handler';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import React from 'react';
-import { StyleSheet, StatusBar, Alert } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import AllRoutes from './src/AllRoutes';
 
-const App = () => {
+export default function App() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor="#1d6e67"
-      />
-      <AllRoutes />
-    </GestureHandlerRootView>
+    <>
+      <SafeAreaView style={styles.topSafeArea} />
+      <StatusBar barStyle="light-content" showHideTransition='fade' backgroundColor={"#1d6e67"} />
+      <SafeAreaView style={styles.container}>
+        <View style={styles.contentContainer}>
+          <AllRoutes />
+        </View>
+      </SafeAreaView>
+    </>
   );
-};
-
-export default App;
+}
 
 const styles = StyleSheet.create({
-  main: {
+  container: {
     flex: 1,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // backgroundColor: "#FFFFFF",
+    alignItems: 'center',
+    backgroundColor: 'white',
+    width: '100%',
   },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '60%',
-    marginTop: 20,
-  }
+  logo: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: 'dodgerblue',
+  },
+  contentContainer: {
+    flex: 1,
+    width: '100%',
+    marginTop: 20
+  },
+  topSafeArea: {
+    flex: 0,
+  },
 });

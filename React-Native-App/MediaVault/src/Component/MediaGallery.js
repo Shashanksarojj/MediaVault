@@ -1,16 +1,7 @@
-import React,
-{
-    useState,
-    useEffect,
-    forwardRef,
-    useImperativeHandle
-} from 'react';
-import {
-    StyleSheet, Text, View, Image, TouchableOpacity,
-    Modal, FlatList, Dimensions, Alert, RefreshControl
-} from 'react-native';
+import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef } from 'react';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Modal, FlatList, Dimensions, Alert, RefreshControl } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Video from 'react-native-video';
+import { Video } from 'expo-av'; // Importing Video from expo-av
 import { fetchMedia, deleteMedia } from './api';
 
 const MediaGallery = forwardRef(({ navigation }, ref) => {
@@ -19,6 +10,8 @@ const MediaGallery = forwardRef(({ navigation }, ref) => {
     const [selectedMedia, setSelectedMedia] = useState(null);
     const [selectedForDeletion, setSelectedForDeletion] = useState(null);
     const [refreshing, setRefreshing] = useState(false);
+    const videoRef = useRef(null);
+    const [isPlaying, setIsPlaying] = useState(false); // State to manage video playback
 
     useEffect(() => {
         AsyncStorage.getItem('token').then((token) => {
@@ -91,11 +84,17 @@ const MediaGallery = forwardRef(({ navigation }, ref) => {
             {item.mimeType.startsWith('image/') ? (
                 <Image source={{ uri: item.ImageUrl }} style={styles.thumbnail} />
             ) : (
-                <Video source={{ uri: item.ImageUrl }} style={styles.thumbnail} paused={true} />
+                <View style={styles.thumbnail}>
+                    <Video
+                        ref={videoRef}
+                        source={{ uri: item.ImageUrl }}
+                        style={styles.videoThumbnail}
+                        resizeMode="cover"
+                        shouldPlay={isPlaying && selectedMedia && selectedMedia._id === item._id} // Auto play when selected
+                    />
+                </View>
             )}
-            {/* <Text numberOfLines={1} style={styles.mediaText}>{item.fileName}</Text> */}
             <Text style={styles.mediaText}>{item.mimeType.startsWith('image/') ? "Image" : 'Video'}</Text>
-            {/* <Text style={styles.mediaText}>{item.size ? `${(item.size / 1024).toFixed(2)} KB` : ''}</Text> */}
         </TouchableOpacity>
     );
 
@@ -127,7 +126,15 @@ const MediaGallery = forwardRef(({ navigation }, ref) => {
                         {selectedMedia.mimeType.startsWith('image/') ? (
                             <Image source={{ uri: selectedMedia.ImageUrl }} style={styles.fullImage} />
                         ) : (
-                            <Video source={{ uri: selectedMedia.ImageUrl }} style={styles.fullImage} controls={true} />
+                            <Video
+                                ref={videoRef}
+                                source={{ uri: selectedMedia.ImageUrl }}
+                                style={styles.fullImage}
+                                useNativeControls={true}
+                                resizeMode="contain"
+                                isLooping
+                                shouldPlay={isPlaying && selectedMedia._id === selectedMedia._id} // Auto play when selected
+                            />
                         )}
                     </View>
                 </Modal>
@@ -139,12 +146,10 @@ const MediaGallery = forwardRef(({ navigation }, ref) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // backgroundColor: '#323946',
         padding: 10,
     },
     grid: {
         justifyContent: 'space-between',
-        // gap: 5
     },
     box: {
         width: '33%',
@@ -152,7 +157,7 @@ const styles = StyleSheet.create({
         borderColor: '#0ef',
         backgroundColor: '#323946',
         borderRadius: 10,
-        margin: 1
+        margin: 1,
     },
     mediaText: {
         color: 'white',
@@ -163,6 +168,10 @@ const styles = StyleSheet.create({
         height: Dimensions.get('window').width / 3 - 20,
         margin: 5,
         borderRadius: 5,
+    },
+    videoThumbnail: {
+        width: '100%',
+        height: '100%',
     },
     modalContainer: {
         flex: 1,

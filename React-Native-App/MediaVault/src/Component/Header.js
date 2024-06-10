@@ -52,9 +52,9 @@ const styles = StyleSheet.create({
         left: 20,
     },
     logoImage: {
-        width: 50, // Adjust the width and height as needed
-        height: 50,
-        borderRadius: 20
+        width: 35, // Adjust the width and height as needed
+        height: 35,
+        borderRadius: 10
     },
     logoutButton: {
         position: 'absolute',
