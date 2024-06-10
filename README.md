@@ -132,5 +132,5 @@ DELETE /api/media/del-media/${id}
 
 ## Demo
 
-Insert gif or link to demo
+
 
