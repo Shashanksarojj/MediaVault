@@ -124,11 +124,14 @@ DELETE /api/media/del-media/${id}
 
 
 ## Screenshots
+![Screenshot_20240609_234436_MediaVault](https://github.com/Shashanksarojj/MediaVault/assets/66843256/c71f88b2-14c8-42d8-92da-4cea9ab70784)
+![Screenshot_20240609_234424_MediaVault](https://github.com/Shashanksarojj/MediaVault/assets/66843256/0c38fafd-fe53-4ac0-9fbc-f206e1a38448)
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![Screenshot_20240609_234407_MediaVault](https://github.com/Shashanksarojj/MediaVault/assets/66843256/d0af282c-a221-4b6f-9ea3-1229d6eb3af5)
+
 
 
 ## Demo
 
-Insert gif or link to demo
+
 
