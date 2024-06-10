@@ -1,7 +1,7 @@
 
 const express = require('express');
 const multer = require('multer');
-const { S3Client, DeleteObjectCommand, GetObjectCommand } = require('@aws-sdk/client-s3');
+const { S3Client, DeleteObjectCommand, GetObjectCommand, PutObjectCommand } = require('@aws-sdk/client-s3');
 const { Upload } = require('@aws-sdk/lib-storage');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const multerS3 = require('multer-s3');
@@ -139,6 +139,7 @@ router.get('/get-media', verifyToken, async (req, res) => {
 
 
 // // Get media files for logged-in user with Pagination
+
 // router.get('/get-media', verifyToken, async (req, res) => {
 //     try {
 //         const mediaFiles = await Media.find({ userId: req.user.user_id });
@@ -173,7 +174,10 @@ router.get('/get-media', verifyToken, async (req, res) => {
 //     }
 // });
 
+
+
 // Serve media file by ID
+
 router.get('/media/:id', verifyToken, async (req, res) => {
     try {
         const media = await Media.findById(req.params.id);
@@ -216,6 +220,49 @@ router.delete('/del-media/:id', verifyToken, async (req, res) => {
     } catch (error) {
         console.log("Error deleting!")
         res.status(500).json({ message: "Error deleting media.", error });
+    }
+});
+
+// Generate a pre-signed URL for file upload
+
+router.post('/generate-upload-url', verifyToken, async (req, res) => {
+    try {
+        const { fileType, fileName } = req.body;
+        const key = `${Date.now().toString()}-${fileName}`;
+        const params = {
+            Bucket: myBucket,
+            Key: key,
+            ContentType: fileType,
+            ACL: 'bucket-owner-full-control',
+        };
+
+        const command = new PutObjectCommand(params);
+        const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 }); // URL valid for 1 hour
+
+        res.status(200).json({ uploadUrl, key });
+    } catch (error) {
+        res.status(500).json({ message: 'Error generating upload URL', error });
+    }
+});
+
+// Save media metadata to the database
+
+router.post('/save-media-metadata', verifyToken, async (req, res) => {
+    try {
+        const { fileName, mimeType, userId } = req.body;
+
+        const newMedia = new Media({
+            userId,
+            fileName,
+            mimeType,
+            filePath: `https://${myBucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`,
+        });
+
+        await newMedia.save();
+
+        res.status(201).json({ message: 'Media metadata saved successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error saving media metadata', error });
     }
 });
 
