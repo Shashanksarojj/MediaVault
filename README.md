@@ -124,11 +124,10 @@ DELETE /api/media/del-media/${id}
 
 
 ## Screenshots
-![Screenshot_20240609_234436_MediaVault](https://github.com/Shashanksarojj/MediaVault/assets/66843256/e32ef4a5-5841-4f2f-9a3b-5ea086455d12)
+![Screenshot_20240609_234436_MediaVault](https://github.com/Shashanksarojj/MediaVault/assets/66843256/a2286bd1-4211-4904-bdcb-cd919021b0d7)
+![Screenshot_20240609_234424_MediaVault](https://github.com/Shashanksarojj/MediaVault/assets/66843256/f1d88413-4501-4019-b119-4f44ef4001f7)
+![Screenshot_20240609_234407_MediaVault](https://github.com/Shashanksarojj/MediaVault/assets/66843256/d0af282c-a221-4b6f-9ea3-1229d6eb3af5)
 
-![Screenshot_20240609_234424_MediaVault](https://github.com/Shashanksarojj/MediaVault/assets/66843256/2a49fd64-141e-49b0-ad61-ae6c4aee01c3)
-
-![Screenshot_20240609_234407_MediaVault](https://github.com/Shashanksarojj/MediaVault/assets/66843256/6e3dce17-78fc-447b-a2f9-2007ca3737ee)
 
 
 ## Demo
