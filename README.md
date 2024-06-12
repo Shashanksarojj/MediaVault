@@ -5,7 +5,7 @@ MediaVault is a secure and efficient application designed to store and delete yo
 
 ## Tech Stack
 
-**Client:** React Native
+**Client-App :** React Native Expo
 
 **Server:** Node, Express
 
